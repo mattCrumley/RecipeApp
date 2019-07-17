@@ -1,3 +1,11 @@
+a{
+	font-size: 1.5em;
+}
+
+h4{
+	font-size: 1.5em;
+}
+
 .container-fluid{
 	/*
 		bootstrap containers have padding by default.
@@ -56,4 +64,9 @@
   background-color: dodgerblue;
   color: white;
   transform: rotateY(180deg);
+}
+
+.recipeImg{
+	height: 300px;
+	width: 300px;
 }
