@@ -6,10 +6,10 @@
 
 	<header class="jumbotron">
 		<div class="container"
-			<h1>Welcome To Your Favorite Recipes!</h1>
+			<h1>Welcome To My Favorite Recipes!</h1>
 			
 			<p>
-				<a class="btn btn-primary btn-large" href = "/recipes/new">Add New Recipe</a>
+				<a class="btn btn-primary btn-large" href = "/recipes/new">Add New Recipe <i class="fas fa-plus"></i></a>
 			</p>
 		</div>
 	</header>
@@ -23,8 +23,8 @@
 
 		<div class="col-md-3 col-sm-6">
 			<div class="thumbnail">
-				<img src = "<%= recipe.image %>" >
-				<div class="caption"><%= recipe.name %> </div>
+				<img class="recipeImage" src = "<%= recipe.image %>" >
+				<div class="caption"><%= recipe.name %></div>
 				<p>
 					<a href="/recipes/<%= recipe._id %>" class="btn btn-primary">More Information</a>
 				</p>

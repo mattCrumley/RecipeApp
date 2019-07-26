@@ -5,6 +5,7 @@ var mongoose = require("mongoose");
 
 app.use(bodyParser.urlencoded({extended: true})); 
 app.set("view engine", "ejs");
+app.use(express.static("public")); //tells express where public assets are (like frontend .css, .js, images, etc.)
 
 //connect to mongo db database
 mongoose.connect("mongodb://localhost/recipeApp", { useNewUrlParser: true });
