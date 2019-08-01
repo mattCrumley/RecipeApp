@@ -5,8 +5,8 @@ var mongoose = require("mongoose");
 
 //./models/recipe refers to recipe.js. which contains the recipe Schema
 var Recipe = require("./models/recipe");
-
 var seedDB = require("./seeds");
+var Comment = require("./models/comment");
 
 seedDB(); //seed database
 app.use(bodyParser.urlencoded({extended: true})); 
@@ -17,14 +17,12 @@ app.use(express.static("public")); //tells express where public assets are (like
 mongoose.connect("mongodb://localhost/recipeApp", { useNewUrlParser: true });
 
 
-
 //when user goes to homepage, render landing.ejs
 app.get("/", function(req, res){
 	res.render("landing");
 });
 
-
-
+//***********************Recipe routes********************
 
 //INDEX RESTful route. when user goes to /recipes", render recipes.ejs. 
 app.get("/recipes", function(req, res){
@@ -34,7 +32,7 @@ app.get("/recipes", function(req, res){
 			console.log("The was an error");
 		}
 		else{
-			res.render("index", {recipes:recipes});
+			res.render("recipes/index", {recipes:recipes});
 		}
 	});
 	
@@ -44,7 +42,7 @@ app.get("/recipes", function(req, res){
 //when the user goes to /recipes/new, render new.ejs which is a form to submit a new recipe
 //NEW RESTful route
 app.get("/recipes/new", function(req, res){
-	res.render("new.ejs");
+	res.render("recipes/new");
 	
 });
 
@@ -84,10 +82,63 @@ app.get("/recipes/:id", function(req,res){
 		}
 		else{
 			//render show template with that recipe
-			res.render("show",{recipe: foundRecipe});
+			res.render("recipes/show",{recipe: foundRecipe});
 		}
 	});
 	
+});
+
+
+//***********************comments routes***********************
+
+//NEW RESTful route
+app.get("/recipes/:id/comments/new", function(req, res){
+	//find recipe by id
+	Recipe.findById(req.params.id, function(err, recipe){
+		if(err){
+			console.log(err);
+		}
+		else{
+			res.render("comments/new", {recipe:recipe});
+		}
+		
+		
+	});
+
+});
+
+//CREATE RESTful route
+app.post("/recipes/:id/comments", function(req, res){
+	//lookup recipe using ID
+	Recipe.findById(req.params.id, function(err, recipe){
+		if(err){
+			console.log(err);
+			res.redirect("/recipes");
+		}
+		else{
+			console.log(req.body.comment);
+			Comment.create(req.body.comment, function(err, comment){
+				if(err){
+					console.log(err);
+				}
+				else{
+					recipe.comments.push(comment);
+					recipe.save();
+					res.redirect("/recipes/" + recipe._id);
+				}
+				
+			});
+
+		}
+		
+	});
+	
+	//create new comment
+	
+	
+	//connect comment to recipe
+	
+	//redirect recipe show page
 });
 
 
