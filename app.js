@@ -8,7 +8,24 @@ var Recipe = require("./models/recipe");
 var seedDB = require("./seeds");
 var Comment = require("./models/comment");
 
+var passport = require("passport");
+var LocalStrategy = require("passport-local");
+var User = require("./models/user");
+
 seedDB(); //seed database
+
+// Passport configuration
+app.use(require("express-session")({
+	secret: "password",
+	resave: false,
+	saveUninitialized:false
+}))
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use(bodyParser.urlencoded({extended: true})); 
 app.set("view engine", "ejs");
 app.use(express.static("public")); //tells express where public assets are (like frontend .css, .js, images, etc.)
@@ -91,8 +108,11 @@ app.get("/recipes/:id", function(req,res){
 
 //***********************comments routes***********************
 
-//NEW RESTful route
-app.get("/recipes/:id/comments/new", function(req, res){
+/*
+NEW RESTful route. isLoggedIn checks to make sure user is logged in before 
+making comment
+*/
+app.get("/recipes/:id/comments/new", isLoggedIn, function(req, res){
 	//find recipe by id
 	Recipe.findById(req.params.id, function(err, recipe){
 		if(err){
@@ -108,7 +128,7 @@ app.get("/recipes/:id/comments/new", function(req, res){
 });
 
 //CREATE RESTful route
-app.post("/recipes/:id/comments", function(req, res){
+app.post("/recipes/:id/comments", isLoggedIn, function(req, res){
 	//lookup recipe using ID
 	Recipe.findById(req.params.id, function(err, recipe){
 		if(err){
@@ -141,6 +161,51 @@ app.post("/recipes/:id/comments", function(req, res){
 	//redirect recipe show page
 });
 
+//AUTH RESTful route
+
+//show register form
+app.get("/register", function(req,res){
+	res.render("register");
+})
+
+//handle signup logic
+app.post("/register", function(req, res){
+	var newUser = new User({username:req.body.username});
+	User.register(newUser, req.body.password, function(err, user){
+		if(err){
+			console.log(err);
+			return res.render("register");
+		}
+		passport.authenticate("local")(req, res, function(){
+			res.redirect("/recipes")
+		});
+	});
+})
+
+//show login form
+app.get("/login", function(req, res){
+	res.render("login");
+})
+
+//handle login logic
+app.post("/login", passport.authenticate("local", {successRedirect:"/recipes",
+  failureRedirect:"/login"}), function(req,res){
+	
+})
+
+
+//logout route
+app.get("/logout", function(req,res){
+	req.logout();
+	res.redirect("/recipes")
+})
+
+function isLoggedIn(req,res, next){
+	if(req.isAuthenticated()){
+		return next();
+	}
+	res.redirect("/login");
+}
 
 //start server. 3000 because that is the port goorm ide uses
 app.listen(3000, function(){
