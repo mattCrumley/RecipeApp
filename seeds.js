@@ -29,6 +29,7 @@ function seedDB(){
 	
 	//Remove all recipes
 	Recipe.remove({}, function(err){
+	
 		if(err){
 			console.log(err);
 		}
@@ -61,6 +62,7 @@ function seedDB(){
 		});
 	
 	});
+	
 
 }
 

@@ -27,7 +27,7 @@ router.get("/recipes/:id/comments/new", isLoggedIn, function(req, res){
 //CREATE RESTful route
 router.post("/recipes/:id/comments", isLoggedIn, function(req, res){
 	//lookup recipe using ID
-	Recipe.findById(req.params.id, function(err, recipe){
+	Recipe.findById(req.params.id, function(err, recipe){ //find the correct recipe
 		if(err){
 			console.log(err);
 			res.redirect("/recipes");
@@ -39,7 +39,10 @@ router.post("/recipes/:id/comments", isLoggedIn, function(req, res){
 					console.log(err);
 				}
 				else{
-					recipe.comments.push(comment);
+					comment.author.id = req.user.id; //add username and id to comment
+					comment.author.username = req.user.username;
+					comment.save();
+					recipe.comments.push(comment); //add the new comment to the recipe
 					recipe.save();
 					res.redirect("/recipes/" + recipe._id);
 				}

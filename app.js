@@ -16,7 +16,11 @@ var commentRoutes = require("./routes/comments");
 var recipeRoutes = require("./routes/recipes");
 var indexRoutes = require("./routes/index");
 
-seedDB(); //seed database
+var methodOverride = require("method-override")
+
+//seedDB(); //seed database
+
+
 
 // Passport configuration
 app.use(require("express-session")({
@@ -26,6 +30,7 @@ app.use(require("express-session")({
 }))
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(methodOverride("_method"));
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
