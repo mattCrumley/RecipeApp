@@ -3,6 +3,30 @@ var router = express.Router();
 var Recipe = require("../models/recipe")
 var Comment = require("../models/comment")
 
+
+function checkCommentOwnership(req, res, next){//middleware that ensures user owns comment
+		//is user logged in
+	if(req.isAuthenticated()){
+		Comment.findById(req.params.comment_id, function(err, foundComment){
+			if(err){
+				res.redirect("back")
+			}
+			else{
+				//does user own comment? compare id of comment to current logged in user id
+				if(foundComment.author.id.equals(req.user._id)){
+					next();
+				}
+				else{
+					res.redirect("back");
+				}
+			}
+		})
+	}
+	else{
+		res.redirect("back"); //take user to previous page
+	}
+} 
+
 //***********************comments routes***********************
 
 /*
@@ -54,6 +78,46 @@ router.post("/recipes/:id/comments", isLoggedIn, function(req, res){
 	});
 	
 
+});
+
+//EDIT route
+router.get("/recipes/:id/comments/:comment_id/edit", checkCommentOwnership, function(req, res){
+	Comment.findById(req.params.comment_id, function(err, foundComment){
+		if(err){
+			res.redirect("back");
+		}
+		else{
+			res.render("comments/edit", {recipe_id: req.params.id, comment:foundComment});
+		}
+	});
+	
+	
+});
+
+//Update route
+router.put("/recipes/:id/comments/:comment_id", checkCommentOwnership, function(req, res){
+	Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+		if(err){
+			res.redirect("back")
+		}
+		else{
+			res.redirect("/recipes/" + req.params.id);
+		}
+		
+	});
+	
+});
+
+//DESTROY route
+router.delete("/recipes/:id/comments/:comment_id", checkCommentOwnership,  function(req, res){
+	Comment.findByIdAndRemove(req.params.comment_id, function(err){
+		if(err){
+			res.redirect("back");
+		}
+		else{
+			res.redirect("/recipes/" + req.params.id);
+		}
+	})
 });
 
 function isLoggedIn(req,res, next){

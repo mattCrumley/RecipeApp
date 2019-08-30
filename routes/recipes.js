@@ -5,13 +5,35 @@ var Recipe = require("../models/recipe")
 var User = require("../models/user")
 
 
-function isLoggedIn(req,res, next){
+function isLoggedIn(req,res, next){ //middleware that ensures user is logged in
 	if(req.isAuthenticated()){
 		return next();
 	}
 	res.redirect("/login");
 }
 
+function checkRecipeOwnership(req, res, next){//middleware that ensures user owns recipe
+		//is user logged in
+	if(req.isAuthenticated()){
+		Recipe.findById(req.params.id, function(err, foundRecipe){
+			if(err){
+				res.redirect("/recipes")
+			}
+			else{
+				//does user own recipe? compare id of recipe to current logged in user id
+				if(foundRecipe.author.id.equals(req.user._id)){
+					next();
+				}
+				else{
+					res.redirect("back");
+				}
+			}
+		})
+	}
+	else{
+		res.redirect("back"); //take user to previous page
+	}
+} 
 
 
 //***********************Recipe routes********************
@@ -68,20 +90,19 @@ router.post("/recipes", isLoggedIn, function(req, res){
 });
 
 //EDIT route
-router.get("/recipes/:id/edit", function(req, res){
-	Recipe.findById(req.params.id, function(err, foundRecipe){
-		if(err){
-			res.redirect("/recipes")
-		}
-		else{
-			res.render("recipes/edit", {recipe: foundRecipe})
-		}
-	})
+router.get("/recipes/:id/edit", checkRecipeOwnership, function(req, res){
 	
+	Recipe.findById(req.params.id, function(err, foundRecipe){
+		res.render("recipes/edit", {recipe: foundRecipe})
+		
+		
+	});
+
+
 })
 
 //UPDATE route
-router.put("/recipes/:id", function(req, res){
+router.put("/recipes/:id", checkRecipeOwnership, function(req, res){
 	// find and update recipe
 	Recipe.findByIdAndUpdate(req.params.id, req.body.recipe, function(err, updatedRecipe){
 		if(err){
@@ -113,7 +134,7 @@ router.get("/recipes/:id", function(req,res){
 });
 
 //DESTROY RESTful route
-router.delete("/recipes/:id", function(req, res){
+router.delete("/recipes/:id", checkRecipeOwnership, function(req, res){
 	Recipe.findByIdAndRemove(req.params.id, function(err){
 		if(err){
 			res.redirect("/recipes")
