@@ -17,6 +17,7 @@ var recipeRoutes = require("./routes/recipes");
 var indexRoutes = require("./routes/index");
 
 var methodOverride = require("method-override")
+var flash = require("connect-flash")
 
 //seedDB(); //seed database
 
@@ -31,17 +32,20 @@ app.use(require("express-session")({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride("_method"));
+app.use(flash());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next){ //calls this function on every route
-	res.locals.currentUser = req.user; 
+	res.locals.currentUser = req.user;
+	res.locals.error = req.flash("error");
+	res.locals.success = req.flash("success");
 	next();
 })
 app.use(bodyParser.urlencoded({extended: true})); 
 app.set("view engine", "ejs");
-app.use(express.static("public")); //tells express where public assets are (like frontend .css, .js, images, etc.)
+app.use(express.static(__dirname + "/public")); //tells express where public assets are (like frontend .css, .js, images, etc.)
 
 //connect to mongo db database
 mongoose.connect("mongodb://localhost/recipeApp", { useNewUrlParser: true });

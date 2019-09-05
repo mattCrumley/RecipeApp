@@ -3,37 +3,9 @@ var router = express.Router();
 var passport = require("passport")
 var Recipe = require("../models/recipe")
 var User = require("../models/user")
+var middleware = require("../middleware")
 
 
-function isLoggedIn(req,res, next){ //middleware that ensures user is logged in
-	if(req.isAuthenticated()){
-		return next();
-	}
-	res.redirect("/login");
-}
-
-function checkRecipeOwnership(req, res, next){//middleware that ensures user owns recipe
-		//is user logged in
-	if(req.isAuthenticated()){
-		Recipe.findById(req.params.id, function(err, foundRecipe){
-			if(err){
-				res.redirect("/recipes")
-			}
-			else{
-				//does user own recipe? compare id of recipe to current logged in user id
-				if(foundRecipe.author.id.equals(req.user._id)){
-					next();
-				}
-				else{
-					res.redirect("back");
-				}
-			}
-		})
-	}
-	else{
-		res.redirect("back"); //take user to previous page
-	}
-} 
 
 
 //***********************Recipe routes********************
@@ -55,7 +27,7 @@ router.get("/recipes", function(req, res){
 
 //when the user goes to /recipes/new, render new.ejs which is a form to submit a new recipe
 //NEW RESTful route
-router.get("/recipes/new", isLoggedIn, function(req, res){
+router.get("/recipes/new", middleware.isLoggedIn, function(req, res){
 	res.render("recipes/new");
 	
 });
@@ -64,7 +36,7 @@ router.get("/recipes/new", isLoggedIn, function(req, res){
 	this handles the post request and adds a new recipe to the page
 */
 //CREATE RESTful route
-router.post("/recipes", isLoggedIn, function(req, res){
+router.post("/recipes", middleware.isLoggedIn, function(req, res){
 	var name = req.body.name;
 	var image = req.body.image;
 	var rating = req.body.rating;
@@ -90,7 +62,7 @@ router.post("/recipes", isLoggedIn, function(req, res){
 });
 
 //EDIT route
-router.get("/recipes/:id/edit", checkRecipeOwnership, function(req, res){
+router.get("/recipes/:id/edit", middleware.checkRecipeOwnership, function(req, res){
 	
 	Recipe.findById(req.params.id, function(err, foundRecipe){
 		res.render("recipes/edit", {recipe: foundRecipe})
@@ -102,7 +74,7 @@ router.get("/recipes/:id/edit", checkRecipeOwnership, function(req, res){
 })
 
 //UPDATE route
-router.put("/recipes/:id", checkRecipeOwnership, function(req, res){
+router.put("/recipes/:id", middleware.checkRecipeOwnership, function(req, res){
 	// find and update recipe
 	Recipe.findByIdAndUpdate(req.params.id, req.body.recipe, function(err, updatedRecipe){
 		if(err){
@@ -134,7 +106,7 @@ router.get("/recipes/:id", function(req,res){
 });
 
 //DESTROY RESTful route
-router.delete("/recipes/:id", checkRecipeOwnership, function(req, res){
+router.delete("/recipes/:id", middleware.checkRecipeOwnership, function(req, res){
 	Recipe.findByIdAndRemove(req.params.id, function(err){
 		if(err){
 			res.redirect("/recipes")

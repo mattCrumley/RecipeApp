@@ -4,7 +4,7 @@
     
     <title>My Favorite Recipes</title>
 	<link rel="stylesheet"  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href=" /stylesheets/app.css"> 
+	<link rel="stylesheet" href="/stylesheets/app.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 	<link href="https://fonts.googleapis.com/css?family=Handlee&display=swap" rel="stylesheet">
 	  
@@ -34,3 +34,22 @@
 			</div>
 		</div>
 	</nav>
+			
+	<div class="container">
+		<% if(error && error.length > 0){ //bc error can be an empty array %>
+			<div class ="alert alert-danger" role="alert">
+				<h1><%= error %></h1>
+			</div>
+			
+		<% } %>
+		<% if(success && success.length > 0){ //bc error can be an empty array %>
+			<div class ="alert alert-success" role="alert">
+				<h1><%= success %></h1>
+			</div>
+			
+		<% } %>
+		
+		
+	
+	</div>
+			
