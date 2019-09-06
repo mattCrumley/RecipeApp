@@ -1,30 +1,55 @@
-<% include partials/header %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Favorite Recipes</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/landing.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+		<link href="https://fonts.googleapis.com/css?family=Handlee&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript" async></script>
+    </head>
+    <body>
+    
+    <div class="container">
+        <% if(error && error.length > 0){ %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+        <% if(success && success.length > 0){ %>
+            <div class="alert alert-success" role="alert">
+                <%= success %>
+            </div>
+        <% } %>
+    </div>
+		
+	<div id="landing-header">
+		<div class="jumbotron">
+			
+		 <h1 id="logo"><i class="fas fa-utensils"></i>  My Favorite Recipes</h1>
 
-	
-<div class= "container-fluid">
-	
-	<div class="jumbotron" id="cover">
-	  <div class="jumbotron">
-		 <span class="logo"><h1><i class="fas fa-utensils"></i>  My Favorite Recipes</h1></span>
+	  <h1 id="logo">The one and only app to keep track of all your favorite recipes!</h1>
 
-	  <p>The one and only app to keep track of all your favorite recipes!</p>
-
-	  <h2>
-		  <a href="/recipes">View all the Recipes</a> 
+		<h2>
+		  <a href="/recipes" class="btn btn-lg btn-success">View All Recipes</a>
 		  </h2>
+			
 		</div>
+	</div>
      
 	</div>
-	
-		
-	
-
-</div>	
-	
-
-	
-
+    
+    
+    
+    <ul class="slideshow">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
 
 <% include partials/footer %>
+
 
 
