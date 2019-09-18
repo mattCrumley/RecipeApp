@@ -12,12 +12,11 @@
 	font-family: 'Handlee', cursive;
 }
 
-.thumbnail{
-	padding:0;
-}
 
 .thumbnail img{
-	width:80%;
+	padding:0;
+	display: block;
+   
 }
 
 .thumbnail .caption-full{
