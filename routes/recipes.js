@@ -1,9 +1,13 @@
+require('dotenv').config(); //tells server to load anything in a dotenv into environment variable
+console.log(process.env);  //show environment variables (where API key stored)
 var express = require("express");
 var router = express.Router();
 var passport = require("passport")
+var unirest = require("unirest");
 var Recipe = require("../models/recipe")
 var User = require("../models/user")
 var middleware = require("../middleware")
+
 
 
 
@@ -37,27 +41,46 @@ router.get("/recipes/new", middleware.isLoggedIn, function(req, res){
 */
 //CREATE RESTful route
 router.post("/recipes", middleware.isLoggedIn, function(req, res){
-	var name = req.body.name;
-	var image = req.body.image;
-	var rating = req.body.rating;
-	var cost = req.body.cost;
-	var Link = req.body.Link;
-	var author = {
-		id: req.user._id,
-		username: req.user.username
-	}
-	var newRecipe= {name: name, image: image, rating: rating, cost: cost, Link: Link, author: author};
 	
-	//create a new recipe and save to db
-	Recipe.create(newRecipe, function(err, newlyCreated){
-		if(err){
-			console.log("There was an error");
-		}
-		else{
-			//redirect back to recipe page
-			res.redirect("/recipes");
-		}
+	var apiReq = unirest("GET", "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/extract");
+
+	apiReq.query({
+		"url": req.body.Link
 	});
+
+	apiReq.headers({
+		"x-rapidapi-host": "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com",
+		"x-rapidapi-key": process.env.API_KEY
+	});
+
+	apiReq.end(function (apiRes) {
+		if (apiRes.error) throw new Error(apiRes.error);
+		var name = apiRes.body.title;
+		var image = apiRes.body.image;
+		var rating = req.body.rating;
+		var cost = apiRes.body.totalCost;
+		var Link = req.body.Link;
+		var author = {
+			id: req.user._id,
+			username: req.user.username
+		}
+		var newRecipe= {name: name, image: image, rating: rating, cost: cost, Link: Link, author: author};
+
+		//create a new recipe and save to db
+		Recipe.create(newRecipe, function(err, newlyCreated){
+			if(err){
+				console.log("There was an error");
+			}
+			else{
+				//redirect back to recipe page
+				res.redirect("/recipes");
+			}
+		});
+
+		
+	});
+	
+	
 	
 });
 
