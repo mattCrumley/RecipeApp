@@ -4,26 +4,30 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-3">
-			<p class="lead">My Favorite Recipes</p>
-			<div class="list-group">
-				<li class="list-group-item active">Info 1</li>
-				<li class="list-group-item">Info 2</li>
-				<li class="list-group-item">Info 3</li>
-			</div>
-		</div>
-		<div class="col-md-9">
+		
+		<div class="col-md-9 col-md-offset-2">
 				<div class="thumbnail">
 					<img class="img-responsive" src = "<%= recipe.image %>" >
 					<div class="caption-full">
-						<h4 class="pull-right">
-							<p>Cost: $<%= recipe.cost %> </p>
-						</h4>
+						
 						<h4><%= recipe.name %></h4>
 						<p>Rating: <%= recipe.rating %> </p>
-						<p>Cost: $<%= recipe.cost %> </p>
 						<a href="<%= recipe.Link %>">Link</a>
-						
+						<p>Author: <%= recipe.author.username %></p>
+						<p>Ingredients:  </p>
+						<p id="noWrap"><%= recipe.ingredients %> </p>
+						<p>Instructions:  </p>
+						<p id="noWrap"><%= recipe.instructions %> </p>
+						<% if(currentUser){ //if there is a logged in user%> 
+							<% if(recipe.author.id.equals(currentUser._id)){ //if the logged in user is recipe author %> 
+								<a class ="btn btn-warning" href="/recipes/<%= recipe._id %>/edit">Edit</a>
+								<form class = "deleteForm" action="/recipes/<%= recipe._id %>?_method=DELETE" method="POST">
+									<button class = "btn btn-danger"> Delete </button>
+
+								</form>
+
+							<% } %>
+						<% } %>
 					</div>
 				</div>
 				<div class="well">
@@ -34,9 +38,19 @@
 					<% recipe.comments.forEach(function(comment){ %>
 						<div class="row">
 							<div class="col-md-12">
-								<strong><%= comment.author %></strong>
+								<strong><%= comment.author.username %></strong>
 								<span class="pull-right">10 days ago</span>
 								<p> <%= comment.text %></p>
+								<% if(currentUser){ //if there is a logged in user%> 
+									<% if(comment.author.id.equals(currentUser._id)){ //if the logged in user is comment author %> 
+										<a class ="btn btn-xs btn-warning" href="/recipes/<%= recipe._id %>/comments/<%=comment._id%>/edit">Edit</a>
+										<form class ="deleteForm" action="/recipes/<%= recipe._id %>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+											<input type ="submit" class="btn btn-xs btn-danger" value="Delete">		  
+										</form>
+									<% } %>
+								<% } %>
+								
+											  
 							</div>
 						</div>
 						

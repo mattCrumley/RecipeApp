@@ -7,8 +7,17 @@ var recipeSchema= new mongoose.Schema({
 	name: String,
 	image: String,
 	rating: Number,
+	ingredients:String,
+	instructions: String,
 	cost: Number,
 	Link: String,
+	author:{
+		id:{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User"
+		},
+		username: String
+	},
 	comments: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
