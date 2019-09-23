@@ -12,9 +12,12 @@
 						
 						<h4><%= recipe.name %></h4>
 						<p>Rating: <%= recipe.rating %> </p>
-						<p>Cost: $<%= recipe.cost %> </p>
 						<a href="<%= recipe.Link %>">Link</a>
-						<p>Author:  <%= recipe.author.username %></p>
+						<p>Author: <%= recipe.author.username %></p>
+						<p>Ingredients:  </p>
+						<p id="noWrap"><%= recipe.ingredients %> </p>
+						<p>Instructions:  </p>
+						<p id="noWrap"><%= recipe.instructions %> </p>
 						<% if(currentUser){ //if there is a logged in user%> 
 							<% if(recipe.author.id.equals(currentUser._id)){ //if the logged in user is recipe author %> 
 								<a class ="btn btn-warning" href="/recipes/<%= recipe._id %>/edit">Edit</a>

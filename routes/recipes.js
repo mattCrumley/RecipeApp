@@ -1,5 +1,5 @@
 require('dotenv').config(); //tells server to load anything in a dotenv into environment variable
-console.log(process.env);  //show environment variables (where API key stored)
+//console.log(process.env);  //show environment variables (where API key stored)
 var express = require("express");
 var router = express.Router();
 var passport = require("passport")
@@ -54,7 +54,20 @@ router.post("/recipes", middleware.isLoggedIn, function(req, res){
 	});
 
 	apiReq.end(function (apiRes) {
-		if (apiRes.error) throw new Error(apiRes.error);
+		if (apiRes.error){
+			console.log(apiRes.error);
+			res.redirect("/recipes");
+		} 
+		var ingredients ="";
+		var instructions ="";
+		for(i = 0; i < apiRes.body.extendedIngredients.length; i++){
+			ingredients += apiRes.body.extendedIngredients[i].originalString + "\n"
+		}
+		for(var i = 0; i < apiRes.body.analyzedInstructions[0].steps.length; i++ ){
+			instructions += apiRes.body.analyzedInstructions[0].steps[i].number.toString(10) +". "
+			instructions += apiRes.body.analyzedInstructions[0].steps[i].step +"\n"+"\n"
+		}
+	
 		var name = apiRes.body.title;
 		var image = apiRes.body.image;
 		var rating = req.body.rating;
@@ -64,7 +77,7 @@ router.post("/recipes", middleware.isLoggedIn, function(req, res){
 			id: req.user._id,
 			username: req.user.username
 		}
-		var newRecipe= {name: name, image: image, rating: rating, cost: cost, Link: Link, author: author};
+		var newRecipe= {name: name, ingredients: ingredients, instructions: instructions, image: image, rating: rating, cost: cost, Link: Link, author: author};
 
 		//create a new recipe and save to db
 		Recipe.create(newRecipe, function(err, newlyCreated){
