@@ -1,3 +1,9 @@
+********NOTE:**********
+A live, current version of the recipe APP is available via heroku here: 
+
+https://sleepy-taiga-50664.herokuapp.com/
+
+
 **************Instructions*******************
 
 1) If deploying locally on Goorm IDE:
