@@ -1,7 +1,19 @@
 ********NOTE:**********
-A live, current version of the recipe APP is available via heroku here: 
+1) A live, current version of the recipe APP is available via heroku here: 
 
 https://sleepy-taiga-50664.herokuapp.com/
+
+2) The app uses Spoonacular API to extract recipe information, but I kept my API key hidden in a .env file for security reasons. You can get your own API key from Rapid API here: https://rapidapi.com/spoonacular/api/recipe-food-nutrition.
+
+
+3) Note about the following lines of code in app.js:
+
+app.listen(3000, function(){
+	console.log("The recipeApp server has started");
+});
+
+I used a cloud based ide called Goorm because it gives me a domain name to use. Goorm uses port 3000.
+
 
 
 **************Instructions*******************
@@ -63,12 +75,5 @@ https://sleepy-taiga-50664.herokuapp.com/
 	    
 	
 
-************Notes*************************
 
-1) Note about the following lines of code:
 
-app.listen(3000, function(){
-	console.log("The recipeApp server has started");
-});
-
-I used a cloud based ide called Goorm because it gives me a domain name to use. Goorm uses port 3000.
