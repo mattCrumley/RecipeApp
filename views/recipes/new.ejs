@@ -7,6 +7,8 @@
 		
 		
 		<div style="width:30%; margin:25px auto">
+			<button id="uploadRecipeButton" class="btn btn-lg btn-default btn-block btn-primary">Upload a Recipe From the Web</button>
+			<button id="createCustomRecipeButton" class="btn btn-lg btn-default btn-block btn-primary">Create A Custom Recipe</button>
 
 			<form id ="uploadRecipe" action="/recipes" method="POST">
 				<h1 style="text-align:center">Upload a Recipe From the Web</h1>
@@ -75,7 +77,38 @@
 	</div>
 	
 </div>
+<script>
+ var uploadRecipeButton = document.querySelector("#uploadRecipeButton");
+ var createCustomRecipeButton = document.querySelector("#createCustomRecipeButton");
+ var uploadRecipe = document.querySelector("#uploadRecipe");
+ var createCustomRecipe = document.querySelector("#createCustomRecipe");
+ uploadRecipe.style.display ="none"; 
+ createCustomRecipe.style.display="none"; 
 
+ uploadRecipeButton.addEventListener("click", function(){ 
+	 if(uploadRecipe.style.display == "none" && createCustomRecipe.style.display == "block"){ 
+		 uploadRecipe.style.display ="block"; 
+		 createCustomRecipe.style.display = "none"
+	 } else if(uploadRecipe.style.display == "none"){
+		 uploadRecipe.style.display ="block"; 
+	 } else{ 
+		 uploadRecipe.style.display ="none"; 
+	 } 
+ 
+ }); 
 
+ createCustomRecipeButton.addEventListener("click", function(){ 
+	 if(createCustomRecipe.style.display =="none" && uploadRecipe.style.display =="block" ){ 
+		 createCustomRecipe.style.display ="block"; 
+		 uploadRecipe.style.display = "none";
+	 } else if(createCustomRecipe.style.display == "none"){
+		 createCustomRecipe.style.display ="block"; 
+	 } else{ 
+		 createCustomRecipe.style.display ="none"; 
+	 } 
+ 
+ }); 
+
+</script>
 
 <% include ../partials/footer %>
