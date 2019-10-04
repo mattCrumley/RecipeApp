@@ -23,15 +23,15 @@ middlewareObj.checkRecipeOwnership = function(req, res, next){//middleware that 
 					next();
 				}
 				else{
-					req.flash("error", "You do not have permission to do that.")
+					req.flash("error", "You can only do that if you have posted the recipe.")
 					res.redirect("back");
 				}
 			}
 		})
 	}
 	else{
-		req.flash("error", "You must login to do that.");
-		res.redirect("back"); //take user to previous page
+		req.flash("error", "You need to login in order to do that. If you do not have an account, click on the 'Sign Up' button.")
+		res.redirect("/login");
 	}
 } 
 
@@ -55,8 +55,8 @@ middlewareObj.checkCommentOwnership = function(req, res, next){//middleware that
 		})
 	}
 	else{
-		req.flash("error", "You need to login to do that.")
-		res.redirect("back"); //take user to previous page
+		req.flash("error", "You need to login in order to do that. If you do not have an account, click on the 'Sign Up' button.")
+		res.redirect("/login");
 	}
 } 
 
@@ -64,7 +64,7 @@ middlewareObj.isLoggedIn = function(req,res, next){ //middleware that ensures us
 	if(req.isAuthenticated()){
 		return next();
 	}
-	req.flash("error", "You need to login before you can do that.");
+	req.flash("error", "You need to login in order to do that. If you do not have an account, click on the 'Sign Up' button.");
 	res.redirect("/login");
 }
 	

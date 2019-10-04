@@ -22,8 +22,9 @@ router.post("/register", function(req, res){
 	var newUser = new User({username:req.body.username});
 	User.register(newUser, req.body.password, function(err, user){
 		if(err){
-			req.flash("error", err.message);
-			return res.render("register");
+			req.flash("error", "That username is taken. Please choose another.");
+			res.redirect("/register");
+			
 		}
 		passport.authenticate("local")(req, res, function(){
 			req.flash("success", "Welcome to My Favorite Recipes " + user.username);
@@ -38,11 +39,20 @@ router.get("/login", function(req, res){
 })
 
 //handle login logic
+router.post('/login', passport.authenticate('local', {
+ successRedirect:'/recipes',
+ failureRedirect:'/login',
+ successFlash: 'You logged in.',
+ failureFlash: 'Incorrect username or password.'
+}),function(req,res){})
+
+/*
 router.post("/login", passport.authenticate("local", {successRedirect:"/recipes",
   failureRedirect:"/login"}), function(req,res){
+	req.flash("error", "Incorrect username or password.")
 	
 })
-
+*/
 
 //logout route
 router.get("/logout", function(req,res){
