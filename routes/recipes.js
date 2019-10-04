@@ -53,61 +53,68 @@ router.post("/recipes", middleware.isLoggedIn, function(req, res){
 			"x-rapidapi-host": "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com",
 			"x-rapidapi-key": process.env.API_KEY
 		});
+		
 		apiReq.end(function (apiRes) {
 			if (apiRes.error){
 				console.log(apiRes.error);
 				res.redirect("/recipes");
 			} 
-			var ingredients ="";
-			var instructions ="";
-			if(apiRes.body.extendedIngredients){
-				for(i = 0; i < apiRes.body.extendedIngredients.length; i++){
-					ingredients += apiRes.body.extendedIngredients[i].originalString + "\n"
-				}
-			}
-			else{
-				ingredients = "Could not read ingredients from website. Please edit the recipe and  add the ingredients manually."
-			}
-			if(apiRes.body.analyzedInstructions[0].steps){
-				for(var i = 0; i < apiRes.body.analyzedInstructions[0].steps.length; i++ ){
-					instructions += apiRes.body.analyzedInstructions[0].steps[i].number.toString(10) +". "
-					instructions += apiRes.body.analyzedInstructions[0].steps[i].step +"\n"+"\n"
-				}
-			}
-			else{
-				instructions = "Could not read instructions from website. Please edit the recipe and add instructions manually"
-			}
-			if(apiRes.body.title){
-				var name = apiRes.body.title;
-			}
-			else{
-				var name = "Could not read recipe title from website. Please edit the recipe and add the title manually."
-			}
-			if(apiRes.body.image){
-				var image = apiRes.body.image;
-			}
-			else{
-				var image = "Could not get image url for the recipe. Please edit the recipe and add the image url manually.";
-			}
-			var rating = req.body.rating;
-			var cost = apiRes.body.totalCost;
-			var Link = req.body.Link;
-			var author = {
-				id: req.user._id,
-				username: req.user.username
-			}
-			var newRecipe= {name: name, ingredients: ingredients, instructions: instructions, image: image, rating: rating, cost: cost, Link: Link, author: author};
-
-			//create a new recipe and save to db
-			Recipe.create(newRecipe, function(err, newlyCreated){
-				if(err){
-					console.log("There was an error");
+			else if(apiRes.body.instructions){  //if link is a valid recipe, create it
+				var ingredients ="";
+				var instructions ="";
+				if(apiRes.body.extendedIngredients){
+					for(i = 0; i < apiRes.body.extendedIngredients.length; i++){
+						ingredients += apiRes.body.extendedIngredients[i].originalString + "\n"
+					}
 				}
 				else{
-					//redirect back to recipe page
-					res.redirect("/recipes");
+					ingredients = "Could not read ingredients from website. Please edit the recipe and  add the ingredients manually."
 				}
+				if(apiRes.body.analyzedInstructions[0].steps){
+					for(var i = 0; i < apiRes.body.analyzedInstructions[0].steps.length; i++ ){
+						instructions += apiRes.body.analyzedInstructions[0].steps[i].number.toString(10) +". "
+						instructions += apiRes.body.analyzedInstructions[0].steps[i].step +"\n"+"\n"
+					}
+				}
+				else{
+					instructions = "Could not read instructions from website. Please edit the recipe and add instructions manually"
+				}
+				if(apiRes.body.title){
+					var name = apiRes.body.title;
+				}
+				else{
+					var name = "Could not read recipe title from website. Please edit the recipe and add the title manually."
+				}
+				if(apiRes.body.image){
+					var image = apiRes.body.image;
+				}
+				else{
+					var image = "Could not get image url for the recipe. Please edit the recipe and add the image url manually.";
+				}
+				var rating = req.body.rating;
+				var cost = apiRes.body.totalCost;
+				var Link = req.body.Link;
+				var author = {
+					id: req.user._id,
+					username: req.user.username
+				}
+				var newRecipe= {name: name, ingredients: ingredients, instructions: instructions, image: image, rating: rating, cost: cost, Link: Link, author: author};
+
+				//create a new recipe and save to db
+				Recipe.create(newRecipe, function(err, newlyCreated){
+					if(err){
+						console.log("There was an error");
+					}
+					else{
+						//redirect back to recipe page
+						res.redirect("/recipes");
+					}
 			});
+			}
+			else{ //not a valid recipe
+				console.log("Error: No valid recipe found.");
+				res.redirect("/recipes");
+			}
 
 		
 		});
